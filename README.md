@@ -2,6 +2,11 @@
 
 A conversational AI agent that helps hiring managers find the right SHL Individual Test Solutions through natural dialogue — built for the SHL AI Research Intern take-home assignment.
 
+
+**Live API:** https://shl-assessment-recommender-ra3n.onrender.com
+
+**Swagger UI:** https://shl-assessment-recommender-ra3n.onrender.com/docs
+
 ## Features
 
 - Conversational recommendation workflow for SHL assessments
@@ -11,7 +16,8 @@ A conversational AI agent that helps hiring managers find the right SHL Individu
 - Catalog-backed URL validation
 - Stateless REST API
 - Interactive Swagger documentation
-- Deployment-ready with Render
+- Production deployment on Render
+- JSON-schema compliant responses for evaluator compatibility
   
 
 ---
@@ -47,6 +53,8 @@ POST /chat
 Go to **https://console.groq.com** → API Keys → Create API Key. 
 
 Groq was selected because it provides low-latency inference and an OpenAI-compatible API, making it well suited for deterministic JSON-based conversational workflows.
+
+> Recommended Python version: **3.11**
 
 ### 2. Install dependencies
 ```bash
@@ -147,7 +155,7 @@ curl -X POST http://localhost:8000/chat \
 3. Render auto-reads `render.yaml`
 4. Add `GROQ_API_KEY` in the **Environment** tab
 5. Deploy — your URL will be `https://<name>.onrender.com`
-5. Trigger **Deploy Latest Commit** from the Render dashboard after pushing changes.
+6. Trigger **Deploy Latest Commit** from the Render dashboard after pushing changes.
 
 > Render free tier sleeps after 15 min inactivity. The assignment allows up to 2 min for the first `/health` wake-up call.
 
@@ -202,4 +210,16 @@ requirements.txt
 | All URLs from SHL catalog | ✅ Pass |
 | Response under 30s | ✅ Pass |
 | Official evaluator score | **22/22** |
+
 The service was validated locally and against the deployed Render instance using the provided evaluation scripts and behavioral probes.
+
+
+
+---
+
+## Notes
+
+- The API is fully stateless; clients must send the complete conversation history with each `/chat` request.
+- Recommendations are restricted to assessments present in the SHL catalog.
+- Groq (`llama-3.3-70b-versatile`) is used for low-latency JSON generation.
+- URL validation and deterministic fallback improve reliability while preserving catalog correctness.
